@@ -20,6 +20,7 @@ public class MainUi {
 
   private String code = "";
   private Stage stage;
+  private String title = "";
   private String currentFile = "";
   private CodeEditor editor = new CodeEditor(this.code);
 
@@ -28,11 +29,13 @@ public class MainUi {
       new NamedFunction("Open", () -> { openFile(); }),
       new NamedFunction("Save", () -> { this.save(); }),
       new NamedFunction("Save As", () -> { this.saveFile(this.stage); }),
-      new NamedFunction("Preferences", () -> { }),
+      new NamedFunction("Preferences", () -> {}),
       new NamedFunction("Exit", () -> { exit(); }),
   };
 
   private void exit() { stage.close(); }
+
+  private void setTitle(final String title) { this.stage.setTitle(title); }
 
   private void openFile() {
     FileChooser openFileDialog = new FileChooser();
@@ -41,6 +44,8 @@ public class MainUi {
 
     if (openFile != null) {
       this.currentFile = openFile.getAbsolutePath();
+      this.title = openFile.getName() + " ~ 8086.java";
+      setTitle(this.title);
       try {
         this.editor.setCode(Files.readString(Paths.get(this.currentFile)));
       } catch (IOException e) {
@@ -49,9 +54,13 @@ public class MainUi {
   }
 
   private void save() {
-    try (PrintWriter out = new PrintWriter(this.currentFile)) {
-      out.println(this.editor.getCodeAndSnapshot());
-    } catch (Exception e) {
+    if (this.currentFile.equals("")) {
+      this.saveFile(this.stage);
+    } else {
+      try (PrintWriter out = new PrintWriter(this.currentFile)) {
+        out.println(this.editor.getCodeAndSnapshot());
+      } catch (Exception e) {
+      }
     }
   }
 
