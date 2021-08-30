@@ -119,11 +119,11 @@ public class MainUi {
     runCode.setOnAction(
         (event) -> { System.out.println(editor.getCodeAndSnapshot()); });
 
-    final HBox _editor = new HBox();
-    _editor.getChildren().addAll(runCode, revertEdits);
+    final HBox editorlayout = new HBox();
+    editorlayout.getChildren().addAll(runCode, revertEdits);
 
     final VBox layout = new VBox();
-    layout.getChildren().addAll(editor, _editor);
+    layout.getChildren().addAll(editor, editorlayout);
     layout.setStyle("-fx-background-color: grey; -fx-padding: 10;");
     return layout;
   }
