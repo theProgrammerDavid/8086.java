@@ -5,8 +5,8 @@ public class Conversions {
 
   /**
    *
-   * @param value String String representation of number to be converted
-   * @return int[2] - index 0 is the converted value in int, index 1 is the size
+   * @param value String representation of number to be converted
+   * @return int[2] - index 0 is the converted value in int. index 1 is the size
    *     in bits of the binary representation
    * @throws Exception, NumberFormatException
    */
