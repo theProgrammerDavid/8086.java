@@ -176,6 +176,7 @@ public class Lexer {
   public Token nextToken() throws Exception {
     this.skipNonTokens();
     if (this.position >= this.bufferLength) {
+      System.out.println("returning null");
       return null;
     }
 

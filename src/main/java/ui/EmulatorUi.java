@@ -1,6 +1,7 @@
 package ui;
 
 import emulator.Lexer;
+import emulator.Parser;
 import emulator.models.tokens.Comment;
 import emulator.models.tokens.Token;
 import java.util.*;
@@ -19,6 +20,7 @@ public class EmulatorUi {
   private double stepDelay;
   private String code;
   private Lexer lexer;
+  private Parser parser;
 
   public EmulatorUi() {
     this.setupScene();
@@ -31,15 +33,15 @@ public class EmulatorUi {
    */
   public void setCode(final String code) {
     this.code = code;
-    System.out.printf("code is %s\n", code);
+    
     this.lexer = new Lexer(this.code);
-    System.out.println("Tokenizing");
     ArrayList<Token> list = lexer.tokenize();
+    this.parser = new Parser(list);
     System.out.printf("Size is %d\n", list.size());
     for (Object i : list) {
       if (i instanceof Token) {
         Token t = (Token)i;
-        System.out.printf("Token at line %d, %d with value \n", t.lineNumber, t.position, t.value );
+        System.out.printf("Token at line %d, %d with value %s\n", t.lineNumber, t.position, t.value );
       }
       else if(i instanceof Comment){
         Comment c = (Comment)i;

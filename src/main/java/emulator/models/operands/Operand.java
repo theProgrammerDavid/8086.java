@@ -14,8 +14,7 @@ public class Operand extends Token {
    * @param lineNumber
    */
   public Operand(String value, int position, int lineNumber) {
-    super(value, position, lineNumber);
-
+    super("OPERAND",value, position, lineNumber);
     this.value = value;
     this.name = "OPERAND";
     this.size = 0;

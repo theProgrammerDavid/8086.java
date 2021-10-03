@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.*;
 import java.nio.file.Files;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
@@ -16,7 +14,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import ui.EmulatorUi;
 import util.NamedFunction;
 public class MainUi {
   private EmulatorUi emulatorUi;

@@ -10,7 +10,7 @@ public class Mnemonic extends Token {
    * @param lineNumber
    */
   public Mnemonic(String value, int position, int lineNumber) {
-    super(value, position, lineNumber);
+    super("MNEMONIC",value, position, lineNumber);
     this.name = "MNEMONIC";
     this.value = value;
     this.position = position;

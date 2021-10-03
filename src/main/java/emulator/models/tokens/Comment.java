@@ -10,7 +10,7 @@ public class Comment extends Token {
    * @param lineNumber
    */
   public Comment(String value, int position, int lineNumber) {
-    super(value, position, lineNumber);
+    super("COMMENT",value, position, lineNumber);
     this.name = "COMMENT";
     this.value = value;
     this.position = position;

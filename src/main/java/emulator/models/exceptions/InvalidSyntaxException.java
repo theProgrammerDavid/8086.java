@@ -5,7 +5,13 @@ public class InvalidSyntaxException extends Error {
   public String name;
   public int position, lineNumber;
 
-  public InvalidSyntaxException(String token, int position, int lineNumber) {
+  /**
+   * 
+   * @param token
+   * @param position
+   * @param lineNumber
+   */
+  public InvalidSyntaxException(int position, int lineNumber) {
     super();
     this.name = "Syntax Error";
     this.position = position;
