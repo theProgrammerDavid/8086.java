@@ -75,20 +75,18 @@ public class Lexer {
   }
 
   public Token processComment() {
-    System.out.println("processing comment");
     int end = this.position + 1;
     while (end < this.bufferLength &&
            !Lexer.isNewLine(String.valueOf(this.buffer.charAt(end)))) {
-      end += 1;
+            end += 1;
     }
     final Comment token = new Comment(this.buffer.substring(this.position, end),
                                       this.position, this.lineNumber);
-
+    this.position = end;
     return token;
   }
 
   public Token processAlphaNum() throws InvalidTokenException {
-    System.out.println("alnum");
 
     int end = this.position + 1;
     while (end < this.bufferLength &&
@@ -212,16 +210,12 @@ public class Lexer {
 
   public ArrayList<Token> tokenize() {
     ArrayList<Token> tokens = new ArrayList<Token>();
-    System.out.println("starting to tokenize");
     try {
       while (this.position < this.bufferLength) {
-        System.out.printf("%d < %d", this.position, this.bufferLength);
-        Thread.sleep(500);
+        System.out.printf("%d < %d\n", this.position, this.bufferLength);
         final Token nextTok = this.nextToken();
 
         System.out.println("next token");
-        if (nextTok == null)
-          System.out.println("null token");
 
         if (nextTok != null) {
           tokens.add(nextTok);
