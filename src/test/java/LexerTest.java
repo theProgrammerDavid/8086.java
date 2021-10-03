@@ -1,5 +1,8 @@
 import emulator.Lexer;
+import emulator.models.operands.ImmediateOp;
+import emulator.models.operands.Operand;
 import emulator.models.tokens.Comment;
+import emulator.models.tokens.Mnemonic;
 import emulator.models.tokens.NewLine;
 import emulator.models.tokens.Token;
 import java.util.*;
@@ -24,19 +27,28 @@ public class LexerTest {
     LexerTest.lexer = new Lexer(code);
     ArrayList<Token> list = lexer.tokenize();
 
-    for (Object i : list) {
+    for (Token i : list) {
       if (i instanceof Comment) {
         Comment c = (Comment)i;
         System.out.printf("Comment with name: %s, value: %s, line %d %d\n",
                           c.name, c.value, c.lineNumber, c.position);
       } else if (i instanceof NewLine) {
         NewLine n = (NewLine)i;
-        System.out.printf("Newline at line %d %d with name %s and value %s\n",
+        System.out.printf("Newline at line %d %d with name %s and value %s\n ",
                           n.lineNumber, n.position, n.name, n.value);
-      } else {
-        Token t = (Token)i;
-        System.out.printf("Token at line %d, %d with value %s\n", t.lineNumber,
-                          t.position, t.value);
+      } else if (i instanceof Mnemonic) {
+        Mnemonic m = (Mnemonic)i;
+        System.out.printf("Mnemonic %d %d %s %s\n", m.lineNumber, m.position,
+                          m.name, m.value);
+      } else if (i instanceof ImmediateOp) {
+        ImmediateOp op = (ImmediateOp)i;
+        System.out.printf(
+            "ImmediateOp at line %d % d with name and value %s %s \n",
+            op.lineNumber, op.position, op.name, op.value);
+      } else if (i instanceof Operand) {
+        Operand op = (Operand)i;
+        System.out.printf("Operand at %d %d %s %s\n", op.lineNumber,
+                          op.position, op.name, op.value);
       }
     }
   }
