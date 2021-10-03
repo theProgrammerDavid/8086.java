@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.*;
 import java.nio.file.Files;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -17,10 +16,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import ui.EmulatorUi;
 import util.NamedFunction;
-
 public class MainUi {
-
+  private EmulatorUi emulatorUi;
+  private Stage emulatorWindowStage;
   private String code = "";
   private Stage stage;
   private String title = "";
@@ -35,6 +35,25 @@ public class MainUi {
       new NamedFunction("Preferences", () -> {}),
       new NamedFunction("Exit", () -> { exit(); }),
   };
+
+  private final NamedFunction[] runMenuCallbacks = {
+      new NamedFunction("Emulate", () -> { this.emulate(); })};
+
+  private void emulate() {
+    if (this.emulatorWindowStage != null)
+      return;
+    emulatorWindowStage = new Stage();
+    emulatorWindowStage.setTitle("Emulator");
+    emulatorWindowStage.setScene(this.emulatorUi.getScene());
+    emulatorWindowStage.show();
+    emulatorWindowStage.setOnCloseRequest((event) -> {
+      // setting the reference to null will delete the
+      // object evntually
+      this.emulatorWindowStage = null;
+    });
+    
+    emulatorUi.setCode(this.editor.getCodeAndSnapshot());
+  }
 
   private void exit() { stage.close(); }
 
@@ -89,7 +108,7 @@ public class MainUi {
     }
   }
 
-  public MainUi() {}
+  public MainUi() { this.emulatorUi = new EmulatorUi(); }
 
   private Menu getFileMenu() {
     Menu fileMenu = new Menu("File");
@@ -103,11 +122,23 @@ public class MainUi {
     return fileMenu;
   }
 
+  private Menu getRunMenu() {
+    Menu fileMenu = new Menu("Run");
+
+    for (NamedFunction nf : runMenuCallbacks) {
+      MenuItem m = new MenuItem(nf.getName());
+      m.setOnAction((event) -> { nf.callFunction(); });
+      fileMenu.getItems().add(m);
+    }
+
+    return fileMenu;
+  }
+
   private VBox createMenu() {
     VBox menuBox = new VBox();
     MenuBar mainMenu = new MenuBar();
 
-    mainMenu.getMenus().add(getFileMenu());
+    mainMenu.getMenus().addAll(getFileMenu(), getRunMenu());
 
     menuBox.getChildren().addAll(mainMenu);
     return menuBox;

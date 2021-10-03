@@ -1,52 +1,59 @@
-package emulator.parser;
-import emulator.parser.Constants;
-import emulator.parser.models.*;
-import emulator.parser.models.errors.InvalidTokenException;
-import emulator.parser.models.errors.UnterminatedBracketException;
-import emulator.parser.models.errors.UnterminatedQuoteException;
-import emulator.parser.models.operands.*;
+package emulator;
+
+import emulator.models.*;
+import emulator.models.constants.*;
+import emulator.models.exceptions.*;
+import emulator.models.operands.*;
+import emulator.models.tokens.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.ArrayUtils;
-// import emulator.parser.models;
 
-// import emulator.parser.models.*;
 public class Lexer {
+
   private int position;
   private int lineNumber;
   private String buffer;
   private int bufferLength;
 
-  public Lexer(final String buffer){
+  public Lexer(final String buffer) {
     this.buffer = buffer;
+    this.bufferLength = this.buffer.length();
   }
 
   public static boolean isNewLine(final String s) {
-    return Pattern.matches("/^[\n\r]$/", s);
+    // return Pattern.matches("^[\n\r]$", s);
+    return s.compareTo("\n") == 0;
   }
 
   public static boolean isComment(final String s) {
-    return Pattern.matches("/^[;]$/", s);
+    // return Pattern.matches("/^[;]$/", s);
+    return s.compareTo(";") == 0;
   }
   public static boolean isAlpha(final String s) {
-    return Pattern.matches("/^[A-Za-z]$/", s);
+    return s.matches("[a-zA-Z]+");
   }
   public static boolean isNum(final String s) {
-    return Pattern.matches("/^[0-9]$/", s);
+    try {
+      Double.parseDouble(s);
+      return true;
+    } catch (NumberFormatException e) {
+      return false;
+    }
   }
   public static boolean isAlphaNum(final String s) {
-    return Pattern.matches("/^[A-Za-z0-9]$/", s);
+    return s.matches("^[a-zA-Z0-9]*$");
   }
   public static boolean isBracket(final String s) {
-    return Pattern.matches("/^[[]$/", s);
+    return Pattern.matches("\\[[^\\[]*\\]", s);
   }
 
   public static boolean isQuote(final String s) {
-    return Pattern.matches("/^[\'\"]$/", s);
+    return Pattern.matches("^[\'\"]", s);
   }
 
   public static boolean isSeparator(final String s) {
-    return Pattern.matches("/^[,]$/", s);
+    return Pattern.matches("^[,]", s);
   }
 
   public void skipNonTokens() {
@@ -60,14 +67,15 @@ public class Lexer {
     }
   }
 
-  public Operand processNewLine(final String c) {
+  public Token processNewLine(final String c) {
     this.lineNumber += 1;
     final NewLine token = new NewLine(c, this.position, this.lineNumber);
     this.position += 1;
     return token;
   }
 
-  public Operand processComment() {
+  public Token processComment() {
+    System.out.println("processing comment");
     int end = this.position + 1;
     while (end < this.bufferLength &&
            !Lexer.isNewLine(String.valueOf(this.buffer.charAt(end)))) {
@@ -79,7 +87,9 @@ public class Lexer {
     return token;
   }
 
-  public Operand processAlphaNum() throws InvalidTokenException {
+  public Token processAlphaNum() throws InvalidTokenException {
+    System.out.println("alnum");
+
     int end = this.position + 1;
     while (end < this.bufferLength &&
            Lexer.isAlphaNum(String.valueOf(this.buffer.charAt(end)))) {
@@ -119,7 +129,7 @@ public class Lexer {
     throw new InvalidTokenException(upperCaseTok, position, lineNumber);
   }
 
-  public Operand processBrackets() throws Exception {
+  public Token processBrackets() throws Exception {
     final int end = this.buffer.indexOf("]", this.position + 1);
     if (end == -1) {
       throw new UnterminatedBracketException(position, lineNumber);
@@ -130,7 +140,7 @@ public class Lexer {
 
     final String relativeRegexStr = "/^\\[[A-Z]{2}\\+[A-Z]{2}\\]$/";
     final String memoryRegexStr = "\\[(0X|0B|0|)[0-9A-F]+\\]";
-    Operand token;
+    Token token;
     if (Pattern.matches(memoryRegexStr, upperCaseTok)) {
       token = new MemoryOp(upperCaseTok, this.position, this.lineNumber);
       this.position = end + 1;
@@ -144,34 +154,35 @@ public class Lexer {
     return token;
   }
 
-  public Operand processQuote(final String quote)
+  public Token processQuote(final String quote)
       throws UnterminatedQuoteException {
     final int end = this.buffer.indexOf(quote, this.position + 1);
     if (end == -1) {
       throw new UnterminatedQuoteException(position, lineNumber);
     }
 
-    final Operand token = new StringToken(
+    final Token token = new StringToken(
         this.buffer.substring(this.position, end + 1), position, lineNumber);
     this.position = end + 1;
     return token;
   }
 
-  public Operand processSeparator(final String separator) {
+  public Token processSeparator(final String separator) {
     final int end = this.position + 1;
 
-    final Operand token = new Separator(separator, position, lineNumber);
+    final Token token = new Separator(separator, position, lineNumber);
     this.position = end;
     return token;
   }
 
-  public Operand nextToken() throws Exception {
+  public Token nextToken() throws Exception {
     this.skipNonTokens();
     if (this.position >= this.bufferLength) {
       return null;
     }
 
     final String c = String.valueOf(this.buffer.charAt(this.position));
+    System.out.println("Checking for " + c + " with position " + this.position);
     if (Lexer.isNewLine(c)) {
       return this.processNewLine(c);
     }
@@ -199,11 +210,18 @@ public class Lexer {
     throw new InvalidTokenException(c, position, lineNumber);
   }
 
-  public ArrayList<Operand> tokenize() {
-    ArrayList<Operand> tokens = new ArrayList<Operand>();
+  public ArrayList<Token> tokenize() {
+    ArrayList<Token> tokens = new ArrayList<Token>();
+    System.out.println("starting to tokenize");
     try {
       while (this.position < this.bufferLength) {
-        final Operand nextTok = this.nextToken();
+        System.out.printf("%d < %d", this.position, this.bufferLength);
+        Thread.sleep(500);
+        final Token nextTok = this.nextToken();
+
+        System.out.println("next token");
+        if (nextTok == null)
+          System.out.println("null token");
 
         if (nextTok != null) {
           tokens.add(nextTok);
@@ -212,9 +230,13 @@ public class Lexer {
 
       tokens.add(new NewLine("\n", position + 1, lineNumber + 1));
     } catch (UnterminatedBracketException e) {
+      e.printStackTrace();
     } catch (UnterminatedQuoteException e) {
+      e.printStackTrace();
     } catch (InvalidTokenException e) {
+      e.printStackTrace();
     } catch (Exception e) {
+      e.printStackTrace();
     }
 
     return tokens;

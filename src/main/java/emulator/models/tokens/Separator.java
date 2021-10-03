@@ -1,10 +1,15 @@
-package emulator.parser.models;
-import emulator.parser.models.operands.Operand;
+package emulator.models.tokens;
 
-public class Separator extends Operand {
+public class Separator extends Token {
   public String name, value;
-  public int position, lineNumber;
 
+
+  /**
+   * 
+   * @param value
+   * @param position
+   * @param lineNumber
+   */
   public Separator(String value, int position, int lineNumber) {
     super(value, position, lineNumber);
     this.name = "SEPARATOR";

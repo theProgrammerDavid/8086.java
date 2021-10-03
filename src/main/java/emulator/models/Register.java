@@ -1,4 +1,4 @@
-package emulator.cpu.models;
+package emulator.models;
 
 public class Register {
   public int l;

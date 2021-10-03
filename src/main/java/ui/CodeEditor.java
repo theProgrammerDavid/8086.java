@@ -65,8 +65,6 @@ public class CodeEditor extends StackPane {
     webview.getEngine().loadContent(applyEditingTemplate());
   }
 
-  
-
   /**
    * returns the current code in the editor and updates an editing snapshot of
    * the code which can be reverted to.
@@ -95,5 +93,4 @@ public class CodeEditor extends StackPane {
 
     this.getChildren().add(webview);
   }
-
 }

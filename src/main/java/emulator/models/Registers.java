@@ -1,13 +1,13 @@
-package emulator.cpu;
-import emulator.cpu.models.*;
+package emulator.models;
+
 import java.util.HashMap;
 
 public class Registers {
   public HashMap<String, Register> regs;
   public final String[] regNames = {"AX", "BX", "CX", "DX",   "IP",
-                                     "DI", "SI", "BP", "SP",   "DS",
-                                     "ES", "CS", "SS", "flags"};
-                                     public final Register[] registers = {
+                                    "DI", "SI", "BP", "SP",   "DS",
+                                    "ES", "CS", "SS", "flags"};
+  public final Register[] registers = {
       new Register(),    new Register(),    new Register(),
       new Register(),    new Register(),    new Register(),
       new Register(),    new Register(400), new Register(400),

@@ -1,4 +1,4 @@
-package emulator.parser.models.errors;
+package emulator.models.exceptions;
 
 public class InvalidTokenException extends Exception {
   public String name, token;

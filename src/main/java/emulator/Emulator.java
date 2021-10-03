@@ -1,18 +1,15 @@
 package emulator;
-import java.util.ArrayList;
 
-import emulator.cpu.Core;
-import emulator.parser.Lexer;
-import emulator.parser.Parser;
-import emulator.parser.models.Token;
+import emulator.Cpu;
 
 public class Emulator {
-  private Core cpu;
+  private Cpu cpu;
 
-  public Emulator() { this.cpu = new Core(); }
+  public Emulator() { this.cpu = new Cpu(); }
 
-  public void loadCode(final String code){
-    ArrayList<Token> tokens = new Lexer(code).tokenize()
-    
-  }
+  /**
+   *
+   * @param code String
+   */
+  public void loadCode(final String code) {}
 }

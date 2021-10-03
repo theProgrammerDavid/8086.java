@@ -1,14 +1,10 @@
-package emulator.cpu.models;
+package emulator.models;
 
 public class FlagRegister extends Register {
 
-  public FlagRegister(int value) {
-    super(value);
-  }
+  public FlagRegister(int value) { super(value); }
 
-  public FlagRegister() {
-    super();
-  }
+  public FlagRegister() { super(); }
 
   public void setFlag(final int flag) {
     final int param = this.get((short)-1) | flag;

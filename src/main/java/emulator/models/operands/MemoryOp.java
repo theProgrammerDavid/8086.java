@@ -1,6 +1,5 @@
-package emulator.parser.models.operands;
+package emulator.models.operands;
 
-import emulator.cpu.AddressingMode;
 import util.Conversions;
 
 /**
@@ -8,13 +7,21 @@ import util.Conversions;
  */
 public class MemoryOp extends Operand {
 
-  public AddressingMode type;
+  public String type;
   public int value;
 
+  /**
+   * 
+   * @param value
+   * @param position
+   * @param lineNumber
+   * @throws Exception
+   * @throws NumberFormatException
+   */
   public MemoryOp(String value, int position, int lineNumber)
       throws Exception, NumberFormatException {
     super(value, position, lineNumber);
-    this.type = AddressingMode.MEMORY;
+    this.type = "MEMORY";
     this.size = 16;
     this.value = Conversions.toNumber(value.substring(1, -1))[0];
   }

@@ -1,4 +1,4 @@
-package emulator.parser;
+package emulator.models.constants;
 import static java.util.Map.entry;
 
 import java.util.Map;

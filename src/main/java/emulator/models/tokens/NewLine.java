@@ -1,10 +1,14 @@
-package emulator.parser.models;
-import emulator.parser.models.operands.Operand;
+package emulator.models.tokens;
 
-public class NewLine extends Operand {
+public class NewLine extends Token {
   public String name, value;
-  int position, lineNumber;
 
+  /**
+   * 
+   * @param value
+   * @param position
+   * @param lineNumber
+   */
   public NewLine(String value, int position, int lineNumber) {
     super(value, position, lineNumber);
     this.name = "NEWLINE";
