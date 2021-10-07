@@ -45,7 +45,7 @@ public class Lexer {
     return s.matches("^[a-zA-Z0-9]*$");
   }
   public static boolean isBracket(final String s) {
-    return Pattern.matches("\\[[^\\[]*\\]", s);
+    return s.compareTo("[") == 0 || s.compareTo("]") == 0;
   }
 
   public static boolean isQuote(final String s) {
@@ -53,7 +53,8 @@ public class Lexer {
   }
 
   public static boolean isSeparator(final String s) {
-    return Pattern.matches("^[,]", s);
+    // return Pattern.matches("^[,]", s);
+    return s.compareTo(",") == 0;
   }
 
   public void skipNonTokens() {
@@ -78,7 +79,7 @@ public class Lexer {
     int end = this.position + 1;
     while (end < this.bufferLength &&
            !Lexer.isNewLine(String.valueOf(this.buffer.charAt(end)))) {
-            end += 1;
+      end += 1;
     }
     final Comment token = new Comment(this.buffer.substring(this.position, end),
                                       this.position, this.lineNumber);
@@ -128,18 +129,38 @@ public class Lexer {
   }
 
   public Token processBrackets() throws Exception {
+    System.out.println("processing bracket");
     final int end = this.buffer.indexOf("]", this.position + 1);
     if (end == -1) {
       throw new UnterminatedBracketException(position, lineNumber);
     }
-
-    final String upperCaseTok =
+    System.out.printf("size: %d ,start:%d end:%d\n", this.buffer.length(),
+                      this.position, end + 1);
+    
+                      final String upperCaseTok =
         this.buffer.substring(this.position, end + 1).toUpperCase();
+    
+        System.out.printf("token is |%s|\n", upperCaseTok);
 
-    final String relativeRegexStr = "/^\\[[A-Z]{2}\\+[A-Z]{2}\\]$/";
-    final String memoryRegexStr = "\\[(0X|0B|0|)[0-9A-F]+\\]";
+    // final String relativeRegexStr = "[[A-Z]{2}+[A-Z]{2}]";
+    // final String memoryRegexStr = "\\[(0x|0X|0|)[0-9A-F]+H\\]";
+    final String numberRegexStr = "(0X|0B|0|)[0-9A-F]+";
+    final String memoryRegexStr = "\\[[0-9A-Z]+H\\]";
+    final String relativeRegexStr = "^\\[[A-Z]{2}\\+[A-Z]{2}\\]$";
     Token token;
+
+    // if (upperCaseTok.matches(memoryRegexStr)) {
+    //   token = new MemoryOp(upperCaseTok, this.position, this.lineNumber);
+    //   this.position = end + 1;
+    // } else if (upperCaseTok.matches(relativeRegexStr)) {
+    //   token = new RelativeOp(upperCaseTok, position, lineNumber);
+    //   this.position = end+1;
+    // } else {
+    //   throw new InvalidTokenException(upperCaseTok, position, lineNumber);
+    // }
+
     if (Pattern.matches(memoryRegexStr, upperCaseTok)) {
+
       token = new MemoryOp(upperCaseTok, this.position, this.lineNumber);
       this.position = end + 1;
     } else if (Pattern.matches(relativeRegexStr, upperCaseTok)) {

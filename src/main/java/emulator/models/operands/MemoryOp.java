@@ -23,6 +23,6 @@ public class MemoryOp extends Operand {
     super(value, position, lineNumber);
     this.type = "MEMORY";
     this.size = 16;
-    this.value = Conversions.toNumber(value.substring(1, -1))[0];
+    this.value = Conversions.toNumber(value.substring(1, value.length()-1))[0];
   }
 }
