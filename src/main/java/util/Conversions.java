@@ -10,7 +10,9 @@ public class Conversions {
    *     in bits of the binary representation
    * @throws Exception, NumberFormatException
    */
-  public static int[] toNumber(final String value) throws Exception, NumberFormatException {
+  public static int[] toNumber(final String value)
+      throws Exception, NumberFormatException {
+    System.out.println("converting");
     int initVal = 0;
     if (value.startsWith("0B")) {
       initVal = Integer.parseInt(value, 2);
@@ -18,6 +20,8 @@ public class Conversions {
       initVal = Integer.parseInt(value, 16);
     } else if (value.startsWith("0")) {
       initVal = Integer.parseInt(value, 8);
+    } else if (value.endsWith("H")) {
+      initVal = Integer.parseInt(value.substring(0, value.length() - 1));
     } else {
       initVal = Integer.parseInt(value, 10);
     }
