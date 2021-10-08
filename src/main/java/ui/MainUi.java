@@ -37,8 +37,9 @@ public class MainUi {
       new NamedFunction("Emulate", () -> { this.emulate(); })};
 
   private void emulate() {
-    if (this.emulatorWindowStage != null)
+    if (this.emulatorWindowStage != null) {
       return;
+    }
     emulatorWindowStage = new Stage();
     emulatorWindowStage.setTitle("Emulator");
     emulatorWindowStage.setScene(this.emulatorUi.getScene());
@@ -48,7 +49,7 @@ public class MainUi {
       // object evntually
       this.emulatorWindowStage = null;
     });
-    
+
     emulatorUi.setCode(this.editor.getCodeAndSnapshot());
   }
 

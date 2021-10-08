@@ -1,16 +1,18 @@
 package ui;
 
+import emulator.Emulator;
 import emulator.Lexer;
+import emulator.Memory;
 import emulator.Parser;
+import emulator.models.Instruction;
+import emulator.models.Register;
 import emulator.models.tokens.Comment;
 import emulator.models.tokens.Token;
 import java.util.*;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.*;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import util.NamedFunction;
@@ -22,7 +24,10 @@ public class EmulatorUi {
   private Lexer lexer;
   private Parser parser;
 
+  private Emulator emulator;
+
   public EmulatorUi() {
+    this.emulator = new Emulator();
     this.setupScene();
     this.stepDelay = 0;
   }
@@ -33,35 +38,79 @@ public class EmulatorUi {
    */
   public void setCode(final String code) {
     this.code = code;
-    
+
     this.lexer = new Lexer(this.code);
     ArrayList<Token> list = lexer.tokenize();
     this.parser = new Parser(list);
-    System.out.printf("Size is %d\n", list.size());
-    for (Object i : list) {
-      if (i instanceof Token) {
-        Token t = (Token)i;
-        System.out.printf("Token at line %d, %d with value %s\n", t.lineNumber, t.position, t.value );
-      }
-      else if(i instanceof Comment){
-        Comment c = (Comment)i;
-        System.out.printf("Comment with name: %s, value: %s, line %d %d\n", c.name, c.value, c.lineNumber, c.position);
 
-      }
+    System.out.printf("Size is %d\n", list.size());
+
+    ArrayList<Instruction> instructions = this.parser.parse();
+    for (Instruction i : instructions) {
+      System.out.println(i.toString());
     }
   }
 
-  private Node setupRegisterView() {
-    VBox registerBox = new VBox();
-    Label regionName = new Label("Registers");
+  private GridPane setupRegisterView() {
 
-    registerBox.getChildren().addAll(regionName);
-    return registerBox;
+    GridPane registerPane = new GridPane();
+    registerPane.add(new Label("Registers"), 1, 0);
+    registerPane.getStyleClass().add("registerPane");
+
+    Label ax = new Label("AX");
+    Label bx = new Label("AX");
+    Label cx = new Label("AX");
+    Label dx = new Label("AX");
+    Label h = new Label("H");
+    Label l = new Label("L");
+    Label space = new Label(" ");
+
+    HBox headers = new HBox();
+    registerPane.add(h, 1, 1);
+    registerPane.add(l, 2, 1);
+
+    Map<String, Register> m = this.emulator.getRegisters();
+    int row = 2;
+    registerPane.add(new Label("AX"), 0, row);
+    registerPane.add(new Label(String.valueOf(m.get("AX"))), 0, row);
+    registerPane.add(new Label("AX"), 0, row);
+
+    // for (Map.Entry<String, Register> set :
+    //      this.emulator.getRegisters().entrySet()) {
+
+    //   if (set.getKey().compareTo("AX") == 0 ||
+    //       set.getKey().compareTo("BX") == 0 ||
+    //       set.getKey().compareTo("CX") == 0 ||
+    //       set.getKey().compareTo("DX") == 0) {
+    //     registerPane.add(new Label(set.getKey()), 0, row);
+    //     registerPane.add(new Label(String.valueOf(set.getValue().h)), 1,
+    //     row); registerPane.add(new Label(String.valueOf(set.getValue().l)),
+    //     2, row);
+    //   } else {
+    //     registerPane.add(new Label(set.getKey()), 0, row);
+    //     registerPane.add(new Label(String.valueOf(set.getValue().value)), 1,
+    //                      row);
+    //   }
+
+    //   row++;
+    // }
+
+    return registerPane;
   }
 
-  private Node setupMemoryView() {
+  private VBox setupMemoryView() {
     VBox memBox = new VBox();
+    Memory mem = this.emulator.getMemory();
+    Label regionName = new Label("Memory");
 
+    ListView<String> memList = new ListView<String>();
+
+    for (int i = 0; i < mem.MEM_SIZE; i++) {
+
+      memList.getItems().add(new String(i + " " + mem.mem[i]));
+    }
+    memList.setPrefWidth(150);
+    memBox.getChildren().addAll(regionName, memList);
     return memBox;
   }
 
@@ -103,15 +152,20 @@ public class EmulatorUi {
     return hbox;
   }
   private void setupScene() {
+
     VBox vBox = new VBox();
     HBox emulatorCompBox = new HBox();
 
     vBox.getChildren().addAll(setupActionBar());
-
+    emulatorCompBox.setSpacing(5);
     emulatorCompBox.getChildren().addAll(setupRegisterView(), setupMemoryView(),
                                          setupInstructionView());
 
+    vBox.getChildren().add(emulatorCompBox);
     this.scene = new Scene(vBox);
+    System.out.println("Working Directory = " + System.getProperty("user.dir"));
+    // this.scene.getStylesheets().add("src/main/java/assets/css/style.css");
+    this.scene.getStylesheets().add("./src/main/java/ui/ui.css");
   }
   public Scene getScene() { return this.scene; }
 }
